@@ -15,14 +15,21 @@
       <a class="logo" href="index.html">
         <img src="logo.png" alt="Venüs Cafe Logo">
       </a>
+      <div class="lang-select">
+        <button class="lang-btn" data-lang="tr" aria-pressed="false">TR</button>
+        <button class="lang-btn" data-lang="en" aria-pressed="false">EN</button>
+      </div>
+      <!-- Audio toggle placed in header area -->
+      <div class="audio-control">
+        <button id="audioToggle" aria-pressed="false" title="Müziği kapat/aç">🔊</button>
+      </div>
       <button class="hamburger" aria-label="Menü" aria-expanded="false"><span></span></button>
       <nav class="main-nav">
-        <a href="index.html" class="active">ANA SAYFA</a>
-        <a href="about.html">HAKKIMIZDA</a>
-        <a href="menu.html">MENÜ</a>
-        <a href="media.html">GALERİ</a>
-        <a href="contact.html">İLETİŞİM</a>
-        <a href="contact.html" class="btn btn-outline">REZERVASYON</a>
+        <a href="index.html" class="active" data-i18n="nav.home">ANA SAYFA</a>
+        <a href="about.html" data-i18n="nav.about">HAKKIMIZDA</a>
+        <a href="menu.html" data-i18n="nav.menu">MENÜ</a>
+        <a href="media.html" data-i18n="nav.media">GALERİ</a>
+        <a href="contact.html" data-i18n="nav.contact">İLETİŞİM</a>
       </nav>
     </div>
   </header>
@@ -32,12 +39,11 @@
       <div class="hero-overlay"></div>
       <div class="container hero-inner">
         <div class="hero-content">
-          <div class="eyebrow">VENÜS CAFE</div>
-          <h1 class="hero-title" style="font-family: 'Playfair Display', serif; color: #D4AF6E;">İyi Kahve,<br>İyi Anılar.</h1>
-          <p class="lead">Lezzetli kahveler, sıcak bir ortam ve unutulmaz anlar için Venüs Cafe'ye bekleriz.</p>
+          <div class="eyebrow" data-i18n="hero.eyebrow">VENÜS CAFE</div>
+          <h1 class="hero-title" data-i18n="hero.title" style="font-family: 'Playfair Display', serif; color: #D4AF6E;">İyi Kahve,<br>İyi Anılar.</h1>
+          <p class="lead" data-i18n="hero.lead">Lezzetli kahveler, sıcak bir ortam ve unutulmaz anlar için Venüs Cafe'ye bekleriz.</p>
           <div class="hero-ctas">
-            <a href="menu.html" class="btn">MENÜYE GÖZ AT</a>
-            <a href="contact.html" class="btn btn-outline">REZERVASYON</a>
+            <a href="menu.html" class="btn" data-i18n="cta.menu">MENÜYE GÖZ AT</a>
           </div>
         </div>
       </div>
@@ -45,6 +51,9 @@
 
  
   </main>
+
+  <!-- Background music (looping). Place the file at assets/bgmusic.mp3 or root bgmusic.mp3 -->
+  <audio id="bgAudio" loop preload="auto" src="assets/bgmusic.mp3"></audio>
 
   <footer class="site-footer">
     <!-- REQ: Footer with hours, address and copyright (Template requirement) -->
@@ -65,6 +74,73 @@
       });
       // close when clicking a link
       nav.querySelectorAll('a').forEach(a=>a.addEventListener('click', ()=>{ nav.classList.remove('mobile-open'); ham.classList.remove('open'); ham.setAttribute('aria-expanded','false'); }));
+    })();
+  </script>
+  <script>
+    (function(){
+      const audio = document.getElementById('bgAudio');
+      const btn = document.getElementById('audioToggle');
+      if(!audio || !btn) return;
+
+      // Try to autoplay; browsers may block with sound — if blocked, button will allow user to start
+      function setPlayingState(isPlaying){
+        btn.classList.toggle('playing', !!isPlaying);
+        btn.setAttribute('aria-pressed', String(!!isPlaying));
+        btn.title = isPlaying ? 'Müziği kapat' : 'Müziği aç';
+        btn.textContent = isPlaying ? '🔈' : '🔊';
+      }
+
+      // Manual-only playback: do not autoplay. Initialize button state based on audio.paused
+      setPlayingState(!audio.paused && !audio.muted && !audio.paused);
+
+      btn.addEventListener('click', async ()=>{
+        if(audio.paused){
+          try{ await audio.play(); setPlayingState(true); }catch(e){ setPlayingState(false); console.error(e); }
+        } else {
+          audio.pause(); setPlayingState(false);
+        }
+      });
+    })();
+  </script>
+  <script>
+    // Simple i18n: translations for basic UI strings
+    (function(){
+      const translations = {
+        tr: {
+          'nav.home':'ANA SAYFA','nav.about':'HAKKIMIZDA','nav.menu':'MENÜ','nav.media':'GALERİ','nav.contact':'İLETİŞİM',
+          'hero.eyebrow':'VENÜS CAFE','hero.title':'İyi Kahve,\nİyi Anılar.','hero.lead':'Lezzetli kahveler, sıcak bir ortam ve unutulmaz anlar için Venüs Cafe\'ye bekleriz.',
+          'cta.menu':'MENÜYE GÖZ AT',
+          'contact.title':'İletişim','contact.first_name':'Ad','contact.last_name':'Soyad','contact.email':'E-posta','contact.subject':'Konu','contact.message':'Mesaj','contact.submit':'Gönder'
+        },
+        en: {
+          'nav.home':'HOME','nav.about':'ABOUT','nav.menu':'MENU','nav.media':'GALLERY','nav.contact':'CONTACT',
+          'hero.eyebrow':'VENUS CAFE','hero.title':'Good Coffee,\nGood Memories.','hero.lead':'Delicious coffees, a warm atmosphere and unforgettable moments await you at Venus Cafe.',
+          'cta.menu':'VIEW MENU',
+          'contact.title':'Contact','contact.first_name':'First Name','contact.last_name':'Last Name','contact.email':'Email','contact.subject':'Subject','contact.message':'Message','contact.submit':'Send'
+        }
+      };
+
+      function applyLang(lang){
+        document.querySelectorAll('[data-i18n]').forEach(el=>{
+          const key = el.getAttribute('data-i18n');
+          const txt = translations[lang] && translations[lang][key];
+          if(!txt) return;
+          // Preserve inner HTML line breaks for hero title
+          if(key==='hero.title'){
+            el.innerHTML = txt.replace(/\\n/g,'<br>');
+          } else el.textContent = txt;
+        });
+        // form labels and placeholders
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{ const k=el.dataset.i18nPlaceholder; if(translations[lang]&&translations[lang][k]) el.placeholder = translations[lang][k]; });
+        localStorage.setItem('site_lang', lang);
+      }
+
+      const buttons = document.querySelectorAll('.lang-btn');
+      const init = localStorage.getItem('site_lang') || 'tr';
+      function setActiveBtn(lang){ buttons.forEach(b=>{ const is = b.dataset.lang===lang; b.classList.toggle('active', is); b.setAttribute('aria-pressed', String(is)); }); }
+      setActiveBtn(init);
+      applyLang(init);
+      buttons.forEach(b=> b.addEventListener('click', ()=>{ applyLang(b.dataset.lang); setActiveBtn(b.dataset.lang); }));
     })();
   </script>
 </body>
