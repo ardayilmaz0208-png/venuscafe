@@ -66,6 +66,19 @@ body{margin:0;font-family:'Poppins',sans-serif;background:var(--bg);color:var(--
   .features{grid-template-columns:1fr}
   .contact-form{grid-template-columns:1fr}
   .main-nav{display:none}
+  /* Hamburger button visible on mobile */
+  .hamburger{display:block;background:transparent;border:0;cursor:pointer;width:44px;height:36px;position:relative}
+  .hamburger span, .hamburger span::before, .hamburger span::after{display:block;position:absolute;height:3px;width:22px;background:var(--text);left:50%;transform:translateX(-50%);border-radius:2px;transition:all .25s ease}
+  .hamburger span{top:50%;transform:translate(-50%,-50%)}
+  .hamburger span::before{content:'';top:-8px}
+  .hamburger span::after{content:'';top:8px}
+  .hamburger.open span{background:transparent}
+  .hamburger.open span::before{transform:translateX(-50%) rotate(45deg);top:0}
+  .hamburger.open span::after{transform:translateX(-50%) rotate(-45deg);top:0}
+  /* Mobile nav when open */
+  .main-nav.mobile-open{display:flex;flex-direction:column;position:fixed;right:12px;top:calc(var(--header-offset) + 8px);background:linear-gradient(180deg, rgba(10,8,6,0.95), rgba(10,8,6,0.9));padding:1rem;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,0.6);z-index:95}
+  .main-nav.mobile-open a{display:block;margin:0.35rem 0}
+  .main-nav.mobile-open .btn.btn-outline{margin-top:0.6rem}
   :root{--header-offset:90px}
 }
 

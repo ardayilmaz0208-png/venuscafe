@@ -15,6 +15,7 @@
       <a class="logo" href="index.html">
         <img src="logo.png" alt="Venüs Cafe Logo">
       </a>
+      <button class="hamburger" aria-label="Menü" aria-expanded="false"><span></span></button>
       <nav class="main-nav">
         <a href="index.html" class="active">ANA SAYFA</a>
         <a href="about.html">HAKKIMIZDA</a>
@@ -65,5 +66,19 @@
       <p>&copy; 2026 Venüs Kafe</p>
     </div>
   </footer>
+  <script>
+    (function(){
+      const ham = document.querySelector('.hamburger');
+      const nav = document.querySelector('.main-nav');
+      if(!ham || !nav) return;
+      ham.addEventListener('click', ()=>{
+        const open = nav.classList.toggle('mobile-open');
+        ham.classList.toggle('open', open);
+        ham.setAttribute('aria-expanded', String(open));
+      });
+      // close when clicking a link
+      nav.querySelectorAll('a').forEach(a=>a.addEventListener('click', ()=>{ nav.classList.remove('mobile-open'); ham.classList.remove('open'); ham.setAttribute('aria-expanded','false'); }));
+    })();
+  </script>
 </body>
 </html>
