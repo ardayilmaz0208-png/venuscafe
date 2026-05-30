@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Venüs Kafe - Multimedya</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <!-- REQ: Internal CSS specifically for this page's gallery (Internal CSS requirement) -->
+  <style>
+    /* Internal CSS for media gallery and slider */
+    .media-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem}
+    .media-grid img{width:100%;height:auto;border-radius:8px}
+    .media-wrap{display:flex;flex-direction:column;gap:1rem}
+
+    /* Slider styles (fade effect) */
+    .media-hero{margin:0 0 1.25rem 0}
+    .slider{position:relative;overflow:hidden;border-radius:12px;height:520px}
+    .slide{position:absolute;inset:0;opacity:0;transition:opacity 900ms ease-in-out;will-change:opacity}
+    .slide img{width:100%;height:100%;object-fit:cover;display:block}
+    .slide.active{opacity:1;z-index:2}
+    .slide:not(.active){z-index:1}
+    .slider .nav-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.6);border:none;color:#fff;font-size:2.2rem;padding:0.4rem 0.8rem;border-radius:6px;cursor:pointer;z-index:10;opacity:0.95}
+    .slider .prev{left:12px}
+    .slider .next{right:12px}
+    .slider .dots{position:absolute;left:50%;transform:translateX(-50%);bottom:12px;display:flex;gap:8px;z-index:10}
+    .slider .dots button{width:10px;height:10px;border-radius:50%;border:none;background:rgba(255,255,255,0.35);cursor:pointer}
+    .slider .dots button.active{background:var(--accent)}
+
+    @media(max-width:800px){
+      .slider{height:320px}
+      .slider .nav-btn{font-size:1.6rem;padding:0.3rem 0.5rem}
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="index.html">
+        <img src="logo.png" alt="Venüs Cafe Logo">
+      </a>
+      <nav class="main-nav">
+        <a href="index.html">ANA SAYFA</a>
+        <a href="about.html">HAKKIMIZDA</a>
+        <a href="menu.html">MENÜ</a>
+        <a href="media.html" class="active">GALERİ</a>
+        <a href="contact.html">İLETİŞİM</a>
+        <a href="contact.html" class="btn btn-outline">REZERVASYON</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Large slider at top (replace assets/media1.jpg..media3.jpg with your images) -->
+    <section class="media-hero">
+      <div class="slider" id="heroSlider" aria-label="Galeri Slider">
+        <div class="slide active"><img src="assets/media1.jpg" alt="Kafe iç mekan 1"></div>
+        <div class="slide"><img src="assets/media2.jpg" alt="Kafe dış görünüm"></div>
+        <div class="slide"><img src="assets/media3.jpg" alt="Kafe iç mekan 2"></div>
+        <button class="nav-btn prev" aria-label="Önceki">‹</button>
+        <button class="nav-btn next" aria-label="Sonraki">›</button>
+        <div class="dots" aria-hidden="false">
+          <button class="dot active" data-index="0"></button>
+          <button class="dot" data-index="1"></button>
+          <button class="dot" data-index="2"></button>
+        </div>
+      </div>
+    </section>
+
+    <h1></h1>
+    <section class="media-wrap">
+      <div>
+        <h2>Video</h2>
+        <!-- Video below the slider -->
+        <div class="video-wrap">
+          <!-- Try local video first (place assets/coffee-brew.mp4). If not available, a fallback link to YouTube is provided. -->
+          <video controls playsinline width="100%" height="420" poster="assets/media1.jpg">
+            <source src="assets/coffee-brew.mp4" type="video/mp4">
+            Tarayıcınız video etiketini desteklemiyor. <a href="https://www.youtube.com/watch?v=vEPiGA7v9KE" target="_blank" rel="noopener">YouTube'ta izleyin</a>
+          </video>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>Çalışma Saatleri: 08:00 - 22:00 | Adres: Örnek Mah. Kahve Sk. No:1</p>
+      <p>&copy; 2026 Venüs Kafe</p>
+    </div>
+  </footer>
+  <script>
+    // Simple slider logic
+    (function(){
+      const slider = document.getElementById('heroSlider');
+      if(!slider) return;
+      const slides = slider.querySelectorAll('.slide');
+      const prev = slider.querySelector('.prev');
+      const next = slider.querySelector('.next');
+      const dots = slider.querySelectorAll('.dot');
+      let idx = 0;
+      let timer = null;
+      function show(i){
+        slides.forEach(s=>s.classList.remove('active'));
+        dots.forEach(d=>d.classList.remove('active'));
+        slides[i].classList.add('active');
+        dots[i].classList.add('active');
+        idx = i;
+      }
+      function nextSlide(){ show((idx+1)%slides.length); }
+      function prevSlide(){ show((idx-1+slides.length)%slides.length); }
+      next.addEventListener('click', ()=>{ nextSlide(); resetTimer(); });
+      prev.addEventListener('click', ()=>{ prevSlide(); resetTimer(); });
+      // Make nav buttons keyboard-accessible
+      prev.tabIndex = 0; next.tabIndex = 0;
+      prev.addEventListener('keyup', (e)=>{ if(e.key==='Enter' || e.key===' ') prev.click(); });
+      next.addEventListener('keyup', (e)=>{ if(e.key==='Enter' || e.key===' ') next.click(); });
+      dots.forEach(d=>d.addEventListener('click', e=>{ show(Number(e.target.dataset.index)); resetTimer(); }));
+      function resetTimer(){ if(timer) clearInterval(timer); timer = setInterval(nextSlide,4000); }
+      resetTimer();
+    })();
+  </script>
+</body>
+</html>

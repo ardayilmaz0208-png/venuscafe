@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Venüs Kafe - İletişim</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="index.html">
+        <img src="logo.png" alt="Venüs Cafe Logo">
+      </a>
+      <nav class="main-nav">
+        <a href="index.html">ANA SAYFA</a>
+        <a href="about.html">HAKKIMIZDA</a>
+        <a href="menu.html">MENÜ</a>
+        <a href="media.html">GALERİ</a>
+        <a href="contact.html" class="active">İLETİŞİM</a>
+        <a href="contact.html" class="btn btn-outline">REZERVASYON</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container contact-page">
+    <h1>İletişim & Rezervasyon</h1>
+    <!-- REQ: Form configured for Formspree (method POST, action to Formspree URL) -->
+    <!-- NOTE: JavaScript will intercept submit and send via EmailJS. Replace IDs below after creating free EmailJS account. -->
+    <form id="contactForm" action="https://formspree.io/f/YOUR_FORM_ID" method="POST" class="contact-form">
+      <label>Ad
+        <input type="text" name="first_name" required>
+      </label>
+      <label>Soyad
+        <input type="text" name="last_name" required>
+      </label>
+      <label>E-posta
+        <input type="email" name="email" required>
+      </label>
+      <label>Rezervasyon Tarihi / Konu
+        <input type="text" name="subject">
+      </label>
+      <label>Mesaj
+        <textarea name="message" rows="6"></textarea>
+      </label>
+      <button type="submit" class="btn">Gönder</button>
+      <div id="formMessage" aria-live="polite" style="margin-top:0.6rem;color:var(--accent);display:none"></div>
+    </form>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>Çalışma Saatleri: 08:00 - 22:00 | Adres: Örnek Mah. Kahve Sk. No:1</p>
+      <p>&copy; 2026 Venüs Kafe</p>
+    </div>
+  </footer>
+  <!-- EmailJS client-side script (free tier) -->
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@2.6.4/dist/email.min.js"></script>
+  <script>
+    (function(){
+      // Replace these placeholders with your EmailJS credentials
+      const EMAILJS_USER_ID = 'YOUR_EMAILJS_USER_ID'; // ex: user_xxx
+      const EMAILJS_SERVICE_ID = 'YOUR_SERVICE_ID'; // ex: service_xxx
+      const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID'; // ex: template_xxx
+
+      // Initialize EmailJS
+      if(window.emailjs){
+        emailjs.init(EMAILJS_USER_ID);
+      }
+
+      const form = document.getElementById('contactForm');
+      const msg = document.getElementById('formMessage');
+
+      form.addEventListener('submit', function(e){
+        e.preventDefault();
+
+        // Gather form values
+        const data = {
+          first_name: form.querySelector('[name="first_name"]').value || '',
+          last_name: form.querySelector('[name="last_name"]').value || '',
+          email: form.querySelector('[name="email"]').value || '',
+          subject: form.querySelector('[name="subject"]').value || '',
+          message: form.querySelector('[name="message"]').value || '',
+          // You can include a static recipient here when configuring your EmailJS template
+          to_email: 'ardayilmaz0208@gmail.com'
+        };
+
+        // Basic validation
+        if(!data.first_name || !data.email){
+          msg.style.display = 'block';
+          msg.textContent = 'Lütfen adınızı ve e-posta adresinizi girin.';
+          return;
+        }
+
+        // Send using EmailJS. You must create a template that accepts these template parameters,
+        // or configure the recipient within EmailJS template settings (recommended).
+        if(!EMAILJS_USER_ID || EMAILJS_USER_ID==='YOUR_EMAILJS_USER_ID'){
+          msg.style.display = 'block';
+          msg.textContent = 'EmailJS ayarları yapılmamış. Lütfen EmailJS bilgilerinizi ekleyin.';
+          return;
+        }
+
+        msg.style.display = 'block';
+        msg.textContent = 'Gönderiliyor...';
+
+        emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, data)
+          .then(function(response) {
+            msg.textContent = 'Mesajınız başarıyla gönderildi. Teşekkürler!';
+            form.reset();
+          }, function(error) {
+            msg.textContent = 'Gönderim sırasında hata oluştu. Lütfen daha sonra tekrar deneyin.';
+            console.error('EmailJS error:', error);
+          });
+      });
+    })();
+  </script>
+</body>
+</html>

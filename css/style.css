@@ -1,0 +1,76 @@
+/* External CSS: site-wide styles, colors, fonts, layout (External CSS requirement) */
+.root-fixed{}
+:root{
+  --bg:#0b0b0b; /* deep dark */
+  --muted:#2b2623; /* dark brown */
+  --accent:#D4AF6E; /* warm gold */
+  --text:#efe6dd; /* light cream */
+  --card:#1a1513;
+  --header-offset:110px; /* space to offset fixed header */
+}
+*{box-sizing:border-box}
+.site-header{background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);padding:1rem 0;position:fixed;left:0;right:0;top:0;z-index:30}
+.header-inner{display:flex;justify-content:space-between;align-items:center}
+.logo img{height:64px;display:block}
+.main-nav a{margin-left:1rem;color:var(--text);text-decoration:none;font-weight:600;letter-spacing:0.04em}
+.main-nav a.active{border-bottom:2px solid var(--accent);padding-bottom:6px}
+.btn.btn-outline{border:1px solid rgba(212,175,110,0.9);background:transparent;color:var(--text);padding:0.5rem 0.9rem;border-radius:6px}
+.hero{min-height:72vh;display:flex;align-items:center;padding:6rem 0 4rem 0;position:relative;background-image:url('../background.jpeg');background-size:cover;background-position:center;color:var(--text)}
+body{margin:0;font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);line-height:1.5;padding-top:var(--header-offset)}
+.container{max-width:1100px;margin:0 auto;padding:1rem}
+
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(90deg, rgba(6,4,3,0.82) 0%, rgba(6,4,3,0.45) 55%, rgba(6,4,3,0.82) 100%)}
+.hero-inner{position:relative;z-index:2;padding-top:2rem;padding-bottom:2rem}
+.hero-content{max-width:700px}
+.eyebrow{font-family:'Playfair Display',serif;letter-spacing:0.2em;color:var(--accent);margin-bottom:0.6rem}
+.hero-title{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,6vw,5.2rem);margin:0 0 0.5rem 0;line-height:1}
+.lead{color:rgba(239,230,221,0.9);margin-top:0.5rem;font-size:1.05rem}
+.btn{display:inline-block;padding:0.9rem 1.6rem;border-radius:8px;background:var(--accent);color:#1a120f;text-decoration:none;font-weight:700;margin-right:0.75rem}
+
+.features{display:grid;grid-template-columns:1fr 320px;gap:2rem;align-items:center;padding:2rem 0}
+.features img{width:100%;border-radius:10px}
+
+.team .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem}
+.card{background:var(--card);padding:1rem;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,0.05);text-align:center}
+.card img{width:100%;height:180px;object-fit:cover;border-radius:6px}
+
+.menu-table{width:100%;border-collapse:collapse;margin:1.5rem 0;background:var(--card)}
+.menu-table th, .menu-table td{padding:0.9rem;border:1px solid var(--muted)}
+.menu-table thead th{background:linear-gradient(90deg,var(--muted), #fff);font-family:'Playfair Display',serif}
+
+/* Menu poster styling */
+.menu-figure{max-width:980px;margin:1.25rem auto;text-align:center;color:var(--muted)}
+.menu-poster{width:100%;height:auto;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,0.6);border:1px solid rgba(212,175,110,0.08)}
+.menu-figure figcaption{font-family:'Playfair Display',serif;margin-top:0.5rem;color:var(--accent);letter-spacing:0.06em}
+
+/* About page hero image */
+.about-hero{max-width:1100px;margin:1.5rem auto;border-radius:12px;overflow:hidden}
+.about-hero img{width:100%;height:420px;object-fit:cover;display:block;filter:contrast(0.95) brightness(0.9)}
+
+/* Team avatars (circular) */
+.team .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;align-items:start}
+.team .card{background:transparent;padding:1rem;border-radius:8px;text-align:center;color:var(--text)}
+.team .card img{width:140px;height:140px;object-fit:cover;border-radius:50%;display:block;margin:0 auto 0.8rem;border:4px solid rgba(212,175,110,0.12)}
+.team .card h3{margin:0.25rem 0 0.4rem 0;font-family:'Playfair Display',serif}
+.team .card p{margin:0;font-size:0.95rem;color:rgba(239,230,221,0.9)}
+
+.contact-page .contact-form{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.contact-form label{display:block}
+.contact-form input,.contact-form textarea{width:100%;padding:0.6rem;border:1px solid var(--muted);border-radius:6px}
+.contact-form .btn{grid-column:1 / -1;justify-self:start}
+
+.site-footer{background:transparent;padding:1.5rem 0;color:var(--muted);margin-top:2rem}
+
+/* Responsive */
+@media(max-width:800px){
+  .features{grid-template-columns:1fr}
+  .contact-form{grid-template-columns:1fr}
+  .main-nav{display:none}
+  :root{--header-offset:90px}
+}
+
+/* Accessibility hint */
+.logo:focus, .main-nav a:focus, .btn:focus{outline:2px solid var(--accent);outline-offset:2px}
+
+/* Comment noting which requirements are covered by this CSS file */
+/* This external stylesheet contains: color palette, fonts, layout (grid/flexbox), table styling, responsive rules. */
