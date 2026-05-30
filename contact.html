@@ -27,9 +27,10 @@
 
   <main class="container contact-page">
     <h1>İletişim & Rezervasyon</h1>
-    <!-- REQ: Form configured for Formspree (method POST, action to Formspree URL) -->
-    <!-- NOTE: JavaScript will intercept submit and send via EmailJS. Replace IDs below after creating free EmailJS account. -->
-    <form id="contactForm" action="https://formspree.io/f/YOUR_FORM_ID" method="POST" class="contact-form">
+    <!-- Web3Forms integration: posts to https://api.web3forms.com/submit -->
+    <form id="contactForm" action="https://api.web3forms.com/submit" method="POST" class="contact-form">
+      <!-- Provided access key -->
+      <input type="hidden" name="access_key" value="1ddd1239-ede3-4be2-a2eb-9bfe13412c2e">
       <label>Ad
         <input type="text" name="first_name" required>
       </label>
@@ -56,63 +57,55 @@
       <p>&copy; 2026 Venüs Kafe</p>
     </div>
   </footer>
-  <!-- EmailJS client-side script (free tier) -->
-  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@2.6.4/dist/email.min.js"></script>
+  <!-- Web3Forms submission handler (fetch-based with graceful fallback) -->
   <script>
     (function(){
-      // Replace these placeholders with your EmailJS credentials
-      const EMAILJS_USER_ID = 'YOUR_EMAILJS_USER_ID'; // ex: user_xxx
-      const EMAILJS_SERVICE_ID = 'YOUR_SERVICE_ID'; // ex: service_xxx
-      const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID'; // ex: template_xxx
-
-      // Initialize EmailJS
-      if(window.emailjs){
-        emailjs.init(EMAILJS_USER_ID);
-      }
-
       const form = document.getElementById('contactForm');
       const msg = document.getElementById('formMessage');
 
-      form.addEventListener('submit', function(e){
+      async function handleResponse(res){
+        try {
+          const json = await res.json();
+          if(res.ok && (json.success || json.message)){
+            msg.style.display = 'block';
+            msg.textContent = json.message || 'Mesajınız başarıyla gönderildi. Teşekkürler!';
+            form.reset();
+            return;
+          }
+          msg.style.display = 'block';
+          msg.textContent = json.message || 'Gönderim sırasında hata oluştu. Lütfen daha sonra tekrar deneyin.';
+          console.error('Web3Forms error:', json);
+        } catch(err){
+          msg.style.display = 'block';
+          msg.textContent = 'Sunucu yanıtı işlenemedi.';
+          console.error(err);
+        }
+      }
+
+      form.addEventListener('submit', async function(e){
         e.preventDefault();
+        msg.style.display = 'none';
 
-        // Gather form values
-        const data = {
-          first_name: form.querySelector('[name="first_name"]').value || '',
-          last_name: form.querySelector('[name="last_name"]').value || '',
-          email: form.querySelector('[name="email"]').value || '',
-          subject: form.querySelector('[name="subject"]').value || '',
-          message: form.querySelector('[name="message"]').value || '',
-          // You can include a static recipient here when configuring your EmailJS template
-          to_email: 'ardayilmaz0208@gmail.com'
-        };
-
-        // Basic validation
-        if(!data.first_name || !data.email){
+        const first = form.querySelector('[name="first_name"]').value.trim();
+        const emailVal = form.querySelector('[name="email"]').value.trim();
+        if(!first || !emailVal){
           msg.style.display = 'block';
           msg.textContent = 'Lütfen adınızı ve e-posta adresinizi girin.';
-          return;
-        }
-
-        // Send using EmailJS. You must create a template that accepts these template parameters,
-        // or configure the recipient within EmailJS template settings (recommended).
-        if(!EMAILJS_USER_ID || EMAILJS_USER_ID==='YOUR_EMAILJS_USER_ID'){
-          msg.style.display = 'block';
-          msg.textContent = 'EmailJS ayarları yapılmamış. Lütfen EmailJS bilgilerinizi ekleyin.';
           return;
         }
 
         msg.style.display = 'block';
         msg.textContent = 'Gönderiliyor...';
 
-        emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, data)
-          .then(function(response) {
-            msg.textContent = 'Mesajınız başarıyla gönderildi. Teşekkürler!';
-            form.reset();
-          }, function(error) {
-            msg.textContent = 'Gönderim sırasında hata oluştu. Lütfen daha sonra tekrar deneyin.';
-            console.error('EmailJS error:', error);
-          });
+        const fd = new FormData(form);
+        try {
+          const res = await fetch(form.action, { method: 'POST', body: fd });
+          await handleResponse(res);
+        } catch(err){
+          msg.style.display = 'block';
+          msg.textContent = 'Gönderim sırasında hata oluştu. Lütfen daha sonra tekrar deneyin.';
+          console.error(err);
+        }
       });
     })();
   </script>
